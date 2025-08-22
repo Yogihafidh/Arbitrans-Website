@@ -2,7 +2,7 @@ import Header from "../_components/header";
 import Breadcrumbs from "../_components/breadcrumbs";
 import Gallery from "../_components/galeri";
 import BookingForm from "../_components/bookingform";
-import CarCard from "../_components/card";
+import CarCard from "../_components/Card";
 import Footer from "../_components/footer";
 
 export default function DetailPage() {
