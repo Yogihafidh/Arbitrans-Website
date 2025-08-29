@@ -1,7 +1,7 @@
 function HeadingRental() {
   return (
     <div className="text-center pb-16 pt-32">
-      <h2 className="text-5xl font-bold mb-4 text-netral-900">
+      <h2 className="text-3xl md:text-5xl font-bold mb-4 text-netral-900">
         Cari Kendaraan Untuk Anda
       </h2>
       <p className="text-netral-700">

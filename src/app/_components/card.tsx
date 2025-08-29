@@ -38,7 +38,7 @@ export default function CarCard({ data }: CarCardProps) {
           {data.nama_kendaraan}
         </h3>
 
-        <div className="grid grid-cols-2 gap-y-3 gap-x-4 text-netral-600 text-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-3 gap-x-4 text-netral-600 text-sm mb-2">
           <div className="flex items-center gap-2">
             <span>
               <svg
@@ -139,6 +139,7 @@ export default function CarCard({ data }: CarCardProps) {
           </div>
         </div>
       </div>
+
       <div className="mt-auto self-end w-full flex flex-col gap-4">
         <hr className="border-t border-netral-400" />
 

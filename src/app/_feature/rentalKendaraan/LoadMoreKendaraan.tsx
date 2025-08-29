@@ -62,8 +62,8 @@ export default function LoadMoreKendaraan({
   };
 
   return (
-    <section className="px-24 pb-24">
-      <div className="grid grid-cols-4 gap-6 mx-auto mb-16">
+    <section className="px-8 md:px-16 lg:px-24 pb-24">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mx-auto mb-16">
         {allData.map((data) => (
           <CarCard data={data} key={data.id} />
         ))}

@@ -7,7 +7,7 @@ interface BreadcrumbsProps {
 
 export default function Breadcrumbs({ kendaraanName }: BreadcrumbsProps) {
   return (
-    <ol className="flex items-center mt-32 mb-8 px-24">
+    <ol className="flex items-center mt-32 mb-8 px-8 md:px-16 lg:px-24">
       <li className="inline-flex items-center">
         <Link
           href="/rental"

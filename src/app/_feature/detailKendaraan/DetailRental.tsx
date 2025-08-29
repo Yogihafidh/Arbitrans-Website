@@ -42,7 +42,7 @@ interface DetailRentalProps {
 function DetailRental({ data }: DetailRentalProps) {
   return (
     <>
-      <div className="px-24 mb-8">
+      <div className="px-8 md:px-16 lg:px-24 mb-8">
         <div className="container flex items-center justify-between border-b border-netral-400 pb-8 pt-16">
           <h3 className="text-4xl font-semibold text-netral-900">
             {data.nama_kendaraan}
