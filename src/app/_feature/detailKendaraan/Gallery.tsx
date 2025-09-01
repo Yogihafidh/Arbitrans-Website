@@ -8,9 +8,9 @@ interface GalleryProps {
 
 export default function Gallery({ imageKendaraan = [] }: GalleryProps) {
   return (
-    <div className="px-24 mx-auto py-4">
-      <div className="grid grid-cols-4 grid-rows-[250px_250px] gap-6">
-        <div className="md:col-span-2 md:row-span-2 relative overflow-hidden rounded-3xl">
+    <div className="px-8 md:px-16 lg:px-24 mx-auto py-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 grid-rows-[250px_250px] gap-6">
+        <div className="xl:col-span-2 xl:row-span-2 relative overflow-hidden rounded-3xl">
           <Image
             src={imageKendaraan?.[0]?.url_gambar || "/emptyImage.jpg"}
             alt="Empty Image"
