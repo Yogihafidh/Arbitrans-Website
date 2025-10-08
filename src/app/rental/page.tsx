@@ -11,11 +11,11 @@ export const metadata = {
 };
 
 interface RentalPageProps {
-  searchParams: {
+  searchParams: Promise<{
     startDate?: string;
     endDate?: string;
     jenis?: string;
-  };
+  }>;
 }
 
 export default async function Rental({ searchParams }: RentalPageProps) {
