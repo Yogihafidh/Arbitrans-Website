@@ -5,7 +5,7 @@ export interface ImageKendaraan {
 export interface Kendaraan {
   id: string;
   nama_kendaraan: string;
-  harga_sewa: number;
+  harga_sewa: number; 
   kapasitas_penumpang: number;
   luas_bagasi: string;
   transmisi: string;

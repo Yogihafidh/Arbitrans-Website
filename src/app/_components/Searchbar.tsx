@@ -7,11 +7,11 @@ import InputDate from "./InputDate";
 import InputSelect from "./InputSelect";
 import { useSearch } from "../_context/SearchContext";
 
-interface searchbar {
+interface searchbarProps {
   className?: string;
 }
 
-function Searchbar({ className }: searchbar) {
+function Searchbar({ className }: searchbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [startDate, setStartDate] = useState<Date | null>(null);
