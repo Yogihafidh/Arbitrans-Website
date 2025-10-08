@@ -26,7 +26,13 @@ export default async function Rental({ searchParams }: RentalPageProps) {
     <>
       <Header />
       <HeadingRental />
-      <Searchbar className="!mt-0 mb-16" />
+      <Suspense
+        fallback={
+          <div className="!mt-0 mb-16 h-20 animate-pulse bg-gray-200" />
+        }
+      >
+        <Searchbar className="!mt-0 mb-16" />
+      </Suspense>
       <Suspense fallback={<LoadingSkeleton count={4} />}>
         <KendaraanCard
           startDate={startDate}
