@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: DetailPageProps) {
 }
 
 export default async function DetailPage({ params }: DetailPageProps) {
-  const { rentalId } = await params;
+  const { rentalId } = params;
   const kendaraan = await getDataKendaraan(Number(rentalId));
 
   return (
