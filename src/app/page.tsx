@@ -16,7 +16,7 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <SearchbBar />
+        <Searchbar />
         <AboutUs />
         <CarouselBrand />
         <MengapaPilihKami />

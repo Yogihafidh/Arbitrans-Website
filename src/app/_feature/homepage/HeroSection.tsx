@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function HeroSection() {
   return (
-    <section className="bg-primary pt-12 sm:pt-16 md:pt-24 lg:pt-32 overflow-hidden rounded-b-3xl sm:rounded-b-4xl md:rounded-b-[56px] pb-16">
+    <section className="bg-primary pt-12 sm:pt-16 md:pt-24 lg:pt-32 overflow-hidden rounded-b-3xl sm:rounded-b-4xl md:rounded-b-[56px] pb-24 sm:pb-24 md:pb-40 lg:pb-32">
       <motion.div
         initial={{ y: 40, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
@@ -32,7 +32,7 @@ function HeroSection() {
         transition={{ duration: 0.7, delay: 0.4 }}
       >
         <Image
-          src="/kendaraan.png"
+          src="/Hero-image.png"
           alt="Kendaraan ARBITRANS"
           width={1200}
           height={300}

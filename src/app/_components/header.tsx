@@ -53,7 +53,7 @@ function Header({ className }: HeaderProps) {
             Beranda
           </Link>
           <Link href="/rental" className={getLinkClass("/rental")}>
-            Rental Kendaraan
+            Rental
           </Link>
           <Button
             text="Hubungi Kami"
@@ -107,13 +107,21 @@ function Header({ className }: HeaderProps) {
             className={`flex w-full flex-wrap items-center justify-center gap-6 sm:gap-8 font-medium `}
           >
             <li>
-              <Link href="/" onClick={() => setIsOpen(false)}>
+              <Link
+                href="/"
+                className={getLinkClass("/")}
+                onClick={() => setIsOpen(false)}
+              >
                 Beranda
               </Link>
             </li>
             <li>
-              <Link href="/rental" onClick={() => setIsOpen(false)}>
-                Rental Kendaraan
+              <Link
+                href="/rental"
+                className={getLinkClass("/rental")}
+                onClick={() => setIsOpen(false)}
+              >
+                Rental
               </Link>
             </li>
             <li>
