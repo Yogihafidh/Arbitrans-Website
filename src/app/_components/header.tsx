@@ -49,6 +49,12 @@ function Header({ className }: HeaderProps) {
         />
 
         <nav className="hidden md:flex items-center space-x-8 font-medium text-base">
+          <Link href="/" className={getLinkClass("/")}>
+            Beranda
+          </Link>
+          <Link href="/rental" className={getLinkClass("/rental")}>
+            Rental
+          </Link>
           <Button
             text="Hubungi Kami"
             variant={`${pathname === "/" ? "secondary" : "primary"}`}
@@ -100,6 +106,24 @@ function Header({ className }: HeaderProps) {
           <ul
             className={`flex w-full flex-wrap items-center justify-center gap-6 sm:gap-8 font-medium `}
           >
+            <li>
+              <Link
+                href="/"
+                className={getLinkClass("/")}
+                onClick={() => setIsOpen(false)}
+              >
+                Beranda
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/rental"
+                className={getLinkClass("/rental")}
+                onClick={() => setIsOpen(false)}
+              >
+                Rental
+              </Link>
+            </li>
             <li>
               <Button
                 text="Hubungi Kami"

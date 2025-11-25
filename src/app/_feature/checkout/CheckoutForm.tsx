@@ -1,7 +1,24 @@
 "use client";
-import { useState } from "react";
-import Button from "@/app/_components/Button";
 import { convertRupiah } from "@/app/_utils/helper";
+import { useState } from "react";
+import { createRental } from "@/app/_libs/action";
+import { Booking } from "@/app/_types/booking";
+
+const DOCUMENT_TYPES = [
+  "ktpPenyewa",
+  "ktpPenjamin",
+  "idKaryawan",
+  "simA",
+  "tiketKereta",
+] as const;
+
+type DocumentKey = (typeof DOCUMENT_TYPES)[number];
+
+type DocumentUploadState = {
+  uploading: boolean;
+  url?: string;
+  error?: string;
+};
 
 interface CheckoutFormProps {
   kendaraanNama: string;
@@ -9,6 +26,9 @@ interface CheckoutFormProps {
   dariTanggal: string;
   sampaiTanggal: string;
   hariSewa: number;
+  idKendaraan: number;
+  tanggalMulai: Date;
+  tanggalAkhir: Date;
 }
 
 export default function CheckoutForm({
@@ -17,6 +37,9 @@ export default function CheckoutForm({
   dariTanggal,
   sampaiTanggal,
   hariSewa,
+  idKendaraan,
+  tanggalMulai,
+  tanggalAkhir,
 }: CheckoutFormProps) {
   const [formData, setFormData] = useState({
     nik: "",
@@ -35,6 +58,17 @@ export default function CheckoutForm({
     tiketKereta: null,
   });
 
+  const [documents, setDocuments] = useState<
+    Record<DocumentKey, DocumentUploadState>
+  >(() =>
+    DOCUMENT_TYPES.reduce((acc, key) => {
+      acc[key] = { uploading: false };
+      return acc;
+    }, {} as Record<DocumentKey, DocumentUploadState>)
+  );
+
+  const isUploadingDocs = Object.values(documents).some((doc) => doc.uploading);
+
   const totalHarga = hargaSewa * hariSewa;
   const jesSodir = 250000;
   const totalDenganSopir = totalHarga + jesSodir;
@@ -51,10 +85,93 @@ export default function CheckoutForm({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleDocumentUpload = async (
+    docKey: DocumentKey,
+    file?: File | null
+  ) => {
+    if (!file) return;
+
+    setDocuments((prev) => ({
+      ...prev,
+      [docKey]: { uploading: true, error: undefined, url: prev[docKey].url },
+    }));
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", docKey);
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Gagal mengunggah dokumen.");
+      }
+
+      setDocuments((prev) => ({
+        ...prev,
+        [docKey]: { uploading: false, url: result.url, error: undefined },
+      }));
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "Upload dokumen gagal.";
+      setDocuments((prev) => ({
+        ...prev,
+        [docKey]: {
+          uploading: false,
+          url: prev[docKey].url,
+          error: message,
+        },
+      }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form data:", formData);
-    // TODO: Submit form data to backend
+
+    if (isUploadingDocs) {
+      alert("Tunggu hingga seluruh dokumen selesai diunggah.");
+      return;
+    }
+
+    const requiredDocs: DocumentKey[] = ["ktpPenyewa", "ktpPenjamin", "simA"];
+    const missingDocs = requiredDocs.filter((doc) => !documents[doc].url);
+    if (missingDocs.length > 0) {
+      alert("Mohon unggah seluruh dokumen wajib sebelum melanjutkan.");
+      return;
+    }
+
+    const bookingData: Booking = {
+      id_kendaraan: idKendaraan,
+      tanggal_mulai: tanggalMulai,
+      tanggal_akhir: tanggalAkhir,
+      status: "Belum Dibayar",
+      nama_pelanggan: formData.namaLengkap,
+      nik: formData.nik,
+      no_telephone: formData.noHp,
+      alamat: formData.alamat,
+      lokasi_pengambilan: formData.lokasiPengambilan || undefined,
+      lokasi_pengembalian: formData.lokasiPengembalian || undefined,
+      waktu_pengambilan: formData.jamPengambilan || undefined,
+      waktu_pengembalian: formData.jamPengembalian || undefined,
+      jenis_sewa: formData.jenisSewa,
+      url_ktp_penyewa: documents.ktpPenyewa.url,
+      url_ktp_penjamin: documents.ktpPenjamin.url,
+      url_id_karyawan: documents.idKaryawan.url,
+      url_sim_a: documents.simA.url,
+      url_tiket_kereta: documents.tiketKereta.url,
+    };
+
+    try {
+      await createRental(bookingData);
+    } catch (error) {
+      console.error("Error creating rental:", error);
+      alert("Terjadi kesalahan saat membuat booking. Silakan coba lagi.");
+    }
   };
 
   return (
@@ -283,77 +400,110 @@ export default function CheckoutForm({
               {[
                 {
                   label: "KTP Penyewa *",
-                  name: "ktpPenyewa",
-                  note: "File tipe: JPG, PNG",
+                  key: "ktpPenyewa" as DocumentKey,
+                  note: "Format: JPG, JPEG, PNG, HEIC, HEIF, WEBP",
                 },
                 {
                   label: "KTP Penjamin (Saudara/Teman) *",
-                  name: "ktpPenjamin",
-                  note: "File tipe: JPG, PNG",
+                  key: "ktpPenjamin" as DocumentKey,
+                  note: "Format: JPG, JPEG, PNG, HEIC, HEIF, WEBP",
                 },
                 {
-                  label: "ID Karyawan / NPWP (AK TP) *",
-                  name: "idKaryawan",
-                  note: "File tipe: JPG, PNG",
+                  label: "ID Karyawan / NPWP (AK TP)",
+                  key: "idKaryawan" as DocumentKey,
+                  note: "Format: JPG, JPEG, PNG, HEIC, HEIF, WEBP",
                 },
                 {
-                  label: "SIM A Aktif *",
-                  name: "simAktif",
-                  note: "File tipe: JPG, PNG",
+                  label: "SIM aktif *",
+                  key: "simA" as DocumentKey,
+                  note: "Format: JPG, JPEG, PNG, HEIC, HEIF, WEBP",
                 },
                 {
                   label: "Tiket Kereta PP (bagi wisatawan)",
-                  name: "tiketKereta",
-                  note: "File tipe: JPG, PNG",
+                  key: "tiketKereta" as DocumentKey,
+                  note: "Format: JPG, JPEG, PNG, HEIC, HEIF, WEBP",
                 },
               ].map((doc) => (
-                <div key={doc.name}>
+                <div key={doc.key}>
                   <label className="block text-sm font-medium text-netral-900 mb-2">
                     {doc.label}
                   </label>
-                  <div className="border-2 border-dashed border-netral-300 rounded-lg p-6 text-center hover:border-primary cursor-pointer flex flex-col items-center justify-center">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="mb-2"
-                    >
-                      <path
-                        d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
-                        stroke="#6D7280"
-                        strokeWidth="1.25"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M17 8L12 3L7 8"
-                        stroke="#6D7280"
-                        strokeWidth="1.25"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                      <path
-                        d="M12 3V15"
-                        stroke="#6D7280"
-                        strokeWidth="1.25"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+                  <div className="border-2 border-dashed border-netral-300 rounded-lg p-6 text-center hover:border-primary cursor-pointer flex flex-col items-center justify-center relative overflow-hidden">
+                    {documents[doc.key].url ? (
+                      <>
+                        <img
+                          src={documents[doc.key].url}
+                          alt={`${doc.label} preview`}
+                          className="w-full h-32 object-contain rounded"
+                        />
+                        <p className="text-xs text-netral-600 mt-3">
+                          Klik untuk ganti dokumen
+                        </p>
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mb-2"
+                        >
+                          <path
+                            d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
+                            stroke="#6D7280"
+                            strokeWidth="1.25"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M17 8L12 3L7 8"
+                            stroke="#6D7280"
+                            strokeWidth="1.25"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 3V15"
+                            stroke="#6D7280"
+                            strokeWidth="1.25"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <p className="text-xs text-netral-600">
+                          Upload foto dokumen
+                        </p>
+                      </>
+                    )}
                     <input
                       type="file"
-                      name={doc.name}
-                      className="w-full opacity-0 absolute cursor-pointer"
-                      accept=".jpg,.jpeg,.png"
+                      accept="image/jpeg,image/png,image/jpg,image/heic,image/heif,image/webp"
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      onChange={(event) =>
+                        handleDocumentUpload(doc.key, event.target.files?.[0])
+                      }
+                      disabled={documents[doc.key].uploading}
                     />
-                    <p className="text-xs text-netral-600">
-                      Upload foto dokumen
-                    </p>
                   </div>
+                  {documents[doc.key].uploading && (
+                    <p className="text-xs text-primary mt-1">
+                      Mengunggah dokumen...
+                    </p>
+                  )}
+                  {documents[doc.key].url && !documents[doc.key].uploading && (
+                    <p className="text-xs text-green-600 mt-1">
+                      Dokumen berhasil diunggah
+                    </p>
+                  )}
+                  {documents[doc.key].error && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {documents[doc.key].error}
+                    </p>
+                  )}
                   {doc.note && (
-                    <p className="text-xs text-red-500 mt-1">{doc.note}</p>
+                    <p className="text-xs text-netral-500 mt-1">{doc.note}</p>
                   )}
                 </div>
               ))}
@@ -413,14 +563,23 @@ export default function CheckoutForm({
           </div>
 
           <button
-            className="w-full px-6 py-3 mt-6 rounded-lg font-medium text-white flex items-center justify-center gap-2 transition-all duration-200 border-2 cursor-pointer"
+            type="button"
+            onClick={handleSubmit}
+            className={`w-full px-6 py-3 mt-6 rounded-lg font-medium text-white flex items-center justify-center gap-2 transition-all duration-200 border-2 ${
+              isUploadingDocs
+                ? "opacity-70 cursor-not-allowed"
+                : "cursor-pointer"
+            }`}
             style={{ backgroundColor: "#27C840", borderColor: "#27C840" }}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#1fa530")
-            }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.backgroundColor = "#27C840")
-            }
+            disabled={isUploadingDocs}
+            onMouseEnter={(e) => {
+              if (isUploadingDocs) return;
+              e.currentTarget.style.backgroundColor = "#1fa530";
+            }}
+            onMouseLeave={(e) => {
+              if (isUploadingDocs) return;
+              e.currentTarget.style.backgroundColor = "#27C840";
+            }}
           >
             <svg
               width="23"
