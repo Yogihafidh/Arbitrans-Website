@@ -1,6 +1,6 @@
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
-import Searchbar from "./_components/Searchbar";
+import SearchbBar from "./_components/Searchbar";
 import AboutUs from "./_feature/homepage/AboutUs";
 import CallToAction from "./_feature/homepage/CallToAction";
 import CarouselBrand from "./_feature/homepage/CarouselBrand";

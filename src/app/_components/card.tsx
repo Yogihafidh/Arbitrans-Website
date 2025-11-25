@@ -142,7 +142,8 @@ export default function CarCard({ data }: CarCardProps) {
         </div>
       </div>
       <div className="mt-auto self-end w-full flex flex-col gap-4">
-        <hr className="border-t border-netral-400 mt-1" />
+        <hr className="border-t border-netral-400" />
+
         {isDisewa ? (
           <p className="text-sm text-netral-700">{`Disewa dari tanggal ${data.tanggal_mulai} sampai tanggal ${data.tanggal_akhir}`}</p>
         ) : (
