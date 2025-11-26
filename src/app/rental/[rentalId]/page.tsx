@@ -6,8 +6,12 @@ import Gallery from "@/app/_feature/detailKendaraan/Gallery";
 import RekomendasiKendaraan from "@/app/_feature/detailKendaraan/RekomendasiKendaraan";
 import { getDataKendaraan } from "@/app/_libs/data-services";
 
+type DetailPageParams = {
+  rentalId: string;
+};
+
 interface DetailPageProps {
-  params: { rentalId: string };
+  params: DetailPageParams;
 }
 
 export async function generateMetadata({ params }: DetailPageProps) {
