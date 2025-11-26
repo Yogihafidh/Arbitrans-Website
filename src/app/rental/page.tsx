@@ -11,16 +11,15 @@ export const metadata = {
 };
 
 interface RentalPageProps {
-  searchParams: Promise<{
+  searchParams?: {
     startDate?: string;
     endDate?: string;
     jenis?: string;
-  }>;
+  };
 }
 
 export default async function Rental({ searchParams }: RentalPageProps) {
-  const params = await searchParams;
-  const { jenis, startDate, endDate } = params;
+  const { jenis, startDate, endDate } = searchParams ?? {};
 
   return (
     <>
@@ -33,6 +32,7 @@ export default async function Rental({ searchParams }: RentalPageProps) {
       >
         <Searchbar className="!mt-0 mb-16" />
       </Suspense>
+
       <Suspense fallback={<LoadingSkeleton count={4} />}>
         <KendaraanCard
           startDate={startDate}
@@ -40,6 +40,7 @@ export default async function Rental({ searchParams }: RentalPageProps) {
           jenisKendaraan={jenis}
         />
       </Suspense>
+
       <Footer />
     </>
   );
