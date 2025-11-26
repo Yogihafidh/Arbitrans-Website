@@ -34,9 +34,7 @@ export default async function Rental({
     <>
       <Header />
       <HeadingRental />
-      <Suspense
-        fallback={<SearchbarFallback />}
-      >
+      <Suspense fallback={<SearchbarFallback />}>
         <Searchbar className="!mt-0 mb-16" />
       </Suspense>
 
