@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
 import Searchbar from "./_components/Searchbar";
@@ -16,7 +17,9 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <Searchbar />
+        <Suspense fallback={<div className="h-20 bg-gray-200" />}>
+          <Searchbar />
+        </Suspense>
         <AboutUs />
         <CarouselBrand />
         <MengapaPilihKami />

@@ -6,6 +6,10 @@ import Searchbar from "../_components/Searchbar";
 import HeadingRental from "../_feature/rentalKendaraan/HeadingRental";
 import KendaraanCard from "../_feature/rentalKendaraan/KendaraanCard";
 
+const SearchbarFallback = () => (
+  <div className="!mt-0 mb-16 h-20 animate-pulse bg-gray-200" />
+);
+
 export const metadata = {
   title: "Daftar Kendaraan",
 };
@@ -31,9 +35,7 @@ export default async function Rental({
       <Header />
       <HeadingRental />
       <Suspense
-        fallback={
-          <div className="!mt-0 mb-16 h-20 animate-pulse bg-gray-200" />
-        }
+        fallback={<SearchbarFallback />}
       >
         <Searchbar className="!mt-0 mb-16" />
       </Suspense>
