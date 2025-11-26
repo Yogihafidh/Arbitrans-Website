@@ -6,22 +6,24 @@ import Gallery from "@/app/_feature/detailKendaraan/Gallery";
 import RekomendasiKendaraan from "@/app/_feature/detailKendaraan/RekomendasiKendaraan";
 import { getDataKendaraan } from "@/app/_libs/data-services";
 
-type DetailPageParams = {
-  rentalId: string;
-};
+type RentalParamsPromise = Promise<{ rentalId: string }>;
 
-interface DetailPageProps {
-  params: DetailPageParams;
-}
-
-export async function generateMetadata({ params }: DetailPageProps) {
-  const { rentalId } = params;
+export async function generateMetadata({
+  params,
+}: {
+  params: RentalParamsPromise;
+}) {
+  const { rentalId } = await params;
   const { nama_kendaraan } = await getDataKendaraan(Number(rentalId));
   return { title: `${nama_kendaraan}` };
 }
 
-export default async function DetailPage({ params }: DetailPageProps) {
-  const { rentalId } = params;
+export default async function DetailPage({
+  params,
+}: {
+  params: RentalParamsPromise;
+}) {
+  const { rentalId } = await params;
   const kendaraan = await getDataKendaraan(Number(rentalId));
 
   return (
