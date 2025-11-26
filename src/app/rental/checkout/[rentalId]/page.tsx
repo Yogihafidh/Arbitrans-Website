@@ -14,6 +14,8 @@ interface CheckoutSearchParams {
   to?: string;
 }
 
+type CheckoutSearchParamsPromise = Promise<CheckoutSearchParams | undefined>;
+
 export async function generateMetadata({
   params,
 }: {
@@ -29,17 +31,16 @@ export default async function CheckoutPage({
   searchParams,
 }: {
   params: RentalParamsPromise;
-  searchParams?: CheckoutSearchParams;
+  searchParams: CheckoutSearchParamsPromise;
 }) {
   const { rentalId } = await params;
+  const search = await searchParams;
   const kendaraan = await getDataKendaraan(Number(rentalId));
 
   // Get dates from search params or use defaults
-  const fromDate = searchParams?.from
-    ? new Date(searchParams.from)
-    : new Date();
-  const toDate = searchParams?.to
-    ? new Date(searchParams.to)
+  const fromDate = search?.from ? new Date(search.from) : new Date();
+  const toDate = search?.to
+    ? new Date(search.to)
     : new Date(new Date().getTime() + 86400000);
 
   const hariSewa = Math.max(1, differenceInDays(toDate, fromDate));
