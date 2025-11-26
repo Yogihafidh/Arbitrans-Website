@@ -17,6 +17,8 @@ export interface Kendaraan {
   tipe_kendaraan?: string;
   tahun_produksi?: number;
   deskripsi_kendaraan?: string;
+  rating?: number;
+  total_ulasan?: number;
 
   // properti tambahan
   statusHariIni?: string;

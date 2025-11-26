@@ -17,9 +17,7 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <Suspense fallback={<div className="h-20 animate-pulse bg-gray-200" />}>
-          <Searchbar />
-        </Suspense>
+        <Searchbar />
         <AboutUs />
         <CarouselBrand />
         <MengapaPilihKami />
