@@ -7,28 +7,31 @@ import { getDataKendaraan } from "@/app/_libs/data-services";
 import { format, differenceInDays } from "date-fns";
 import { id } from "date-fns/locale";
 
-interface CheckoutPageProps {
-  params: {
-    rentalId: string;
-  };
-  searchParams?: {
-    from?: string;
-    to?: string;
-  };
+type RentalParamsPromise = Promise<{ rentalId: string }>;
+
+interface CheckoutSearchParams {
+  from?: string;
+  to?: string;
 }
 
-export async function generateMetadata({ params }: CheckoutPageProps) {
-  const { rentalId } = params;
+export async function generateMetadata({
+  params,
+}: {
+  params: RentalParamsPromise;
+}) {
+  const { rentalId } = await params;
   const { nama_kendaraan } = await getDataKendaraan(Number(rentalId));
   return { title: `Checkout - ${nama_kendaraan}` };
 }
 
-
 export default async function CheckoutPage({
   params,
   searchParams,
-}: CheckoutPageProps) {
-  const { rentalId } = params;
+}: {
+  params: RentalParamsPromise;
+  searchParams?: CheckoutSearchParams;
+}) {
+  const { rentalId } = await params;
   const kendaraan = await getDataKendaraan(Number(rentalId));
 
   // Get dates from search params or use defaults
