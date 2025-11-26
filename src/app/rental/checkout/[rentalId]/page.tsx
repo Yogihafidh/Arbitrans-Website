@@ -18,10 +18,11 @@ interface CheckoutPageProps {
 }
 
 export async function generateMetadata({ params }: CheckoutPageProps) {
-  const { rentalId } = await params;
+  const { rentalId } = params;
   const { nama_kendaraan } = await getDataKendaraan(Number(rentalId));
   return { title: `Checkout - ${nama_kendaraan}` };
 }
+
 
 export default async function CheckoutPage({
   params,
