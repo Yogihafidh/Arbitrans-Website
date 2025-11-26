@@ -10,16 +10,21 @@ export const metadata = {
   title: "Daftar Kendaraan",
 };
 
-interface RentalPageProps {
-  searchParams?: {
-    startDate?: string;
-    endDate?: string;
-    jenis?: string;
-  };
-}
+type RentalSearchParams = {
+  startDate?: string;
+  endDate?: string;
+  jenis?: string;
+};
 
-export default async function Rental({ searchParams }: RentalPageProps) {
-  const { jenis, startDate, endDate } = searchParams ?? {};
+type RentalSearchParamsPromise = Promise<RentalSearchParams | undefined>;
+
+export default async function Rental({
+  searchParams,
+}: {
+  searchParams: RentalSearchParamsPromise;
+}) {
+  const filters = await searchParams;
+  const { jenis, startDate, endDate } = filters ?? {};
 
   return (
     <>
