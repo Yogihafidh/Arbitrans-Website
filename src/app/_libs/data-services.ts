@@ -14,13 +14,14 @@ export const getKendaraan = async function (
   const filterStart = startDate || today;
   const filterEnd = endDate || today;
 
-  // 1. Query booking yang sedang berjalan
+  // 1. Query booking yang sedang berjalan atau masih berstatus Disewa/Lunas
   const { data: bookingHariIni, error: errorBooking } = await supabase
     .from("booking")
     .select("id_kendaraan, tanggal_mulai, tanggal_akhir, status")
     .or(
       `and(tanggal_mulai.lte.${filterEnd},tanggal_akhir.gte.${filterStart},status.neq.Selesai),` +
-        `and(tanggal_akhir.lt.${filterStart},status.eq.Telat)`
+        `and(tanggal_akhir.lt.${filterStart},status.eq.Telat),` +
+        `status.eq.Disewa,status.eq.Lunas`
     );
 
   if (errorBooking) {

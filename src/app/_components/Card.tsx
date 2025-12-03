@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Kendaraan } from "../_types/kendaraan";
 import { convertRupiah } from "../_utils/helper";
+import { format } from "date-fns";
 import CardAction from "./CardAction";
 
 type CarCardProps = {
@@ -10,11 +11,20 @@ type CarCardProps = {
 export default function CarCard({ data }: CarCardProps) {
   const isDisewa = data.statusHariIni === "Disewa";
 
+  const formatDate = (date?: Date | string | null) => {
+    if (!date) return "-";
+    try {
+      return format(new Date(date), "dd MMM yyyy");
+    } catch {
+      return String(date);
+    }
+  };
+
   return (
     <div
       className={`w-full border border-netral-400 bg-netral-100 rounded-2xl flex flex-col p-3 ${
         isDisewa
-          ? "bg-netral-200 grayscale cursor-not-allowed"
+          ? "bg-netral-200 grayscale cursor-not-allowed pointer-events-none"
           : "hover:-translate-y-1 duration-300 hover:shadow-sm"
       }`}
     >
@@ -28,9 +38,12 @@ export default function CarCard({ data }: CarCardProps) {
 
         />
         {isDisewa && (
-          <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-5xl font-bold text-netral-100">
-            Disewa
-          </p>
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl">
+            <div className="absolute inset-0 bg-black/50 rounded-xl" />
+            <p className="relative text-5xl font-bold text-white drop-shadow-lg">
+              Disewa
+            </p>
+          </div>
         )}
       </div>
 
@@ -145,7 +158,9 @@ export default function CarCard({ data }: CarCardProps) {
         <hr className="border-t border-netral-400" />
 
         {isDisewa ? (
-          <p className="text-sm text-netral-700">{`Disewa dari tanggal ${data.tanggal_mulai} sampai tanggal ${data.tanggal_akhir}`}</p>
+          <p className="text-sm text-netral-700">{`Disewa dari tanggal ${formatDate(
+            data.tanggal_mulai
+          )} sampai tanggal ${formatDate(data.tanggal_akhir)}`}</p>
         ) : (
           <div className="flex justify-between items-center">
             <span className="text-netral-600 text-sm">Harga</span>
